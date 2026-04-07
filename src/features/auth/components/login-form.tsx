@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, LoginFormData } from '../schemas/login-schema';
-import { Form } from '@/shared/components/ui/form';
-import { Button } from '@/shared/components/ui/button';
-import { FormInput } from '@/shared/components/form-input';
-import { useAuthStore } from '@/shared/store/auth-store';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginFormData } from "../schemas/login-schema";
+import { Form } from "@/shared/components/ui/form";
+import { Button } from "@/shared/components/ui/button";
+import { FormInput } from "@/shared/components/form-input";
+import { useAuth } from "../hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const LoginForm = () => {
   const router = useRouter();
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -28,16 +28,16 @@ export const LoginForm = () => {
     try {
       // Mock API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // Mock successful login
-      setAuth(
-        { id: '1', email: data.email, name: 'Demo User' },
-        'mock-jwt-token'
+      login(
+        { id: "1", email: data.email, name: "Demo User" },
+        "mock-jwt-token",
       );
-      
-      router.push('/dashboard');
+
+      router.push("/dashboard");
     } catch (error) {
-      console.error('Login failed', error);
+      console.error("Login failed", error);
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +67,7 @@ export const LoginForm = () => {
             disabled={isLoading}
           />
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? "Logging in..." : "Login"}
           </Button>
         </form>
       </Form>

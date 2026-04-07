@@ -1,16 +1,17 @@
-'use client';
+"use client";
 
-import { useAuthStore } from '@/shared/store/auth-store';
-import { Button } from '@/shared/components/ui/button';
-import { useRouter } from 'next/navigation';
+import Image from "next/image";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Button } from "@/shared/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export const Dashboard = () => {
-  const { user, clearAuth } = useAuthStore();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
-    clearAuth();
-    router.push('/login');
+    logout();
+    router.push("/login");
   };
 
   return (
@@ -23,8 +24,21 @@ export const Dashboard = () => {
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">Welcome back,</p>
-          <h2 className="text-xl font-bold">{user?.name || user?.email}</h2>
+          <div className="flex items-center gap-4">
+            <Image
+              src="/placeholder-avatar.png"
+              alt="User avatar"
+              width={48}
+              height={48}
+              className="rounded-full"
+            />
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">
+                Welcome back,
+              </p>
+              <h2 className="text-xl font-bold">{user?.name || user?.email}</h2>
+            </div>
+          </div>
         </div>
       </div>
     </div>
