@@ -1,0 +1,12 @@
+import { z } from "zod";
+
+const envSchema = z.object({
+  NEXTAUTH_SECRET: z.string().min(1),
+  NEXTAUTH_URL: z.string().url().optional().default("http://localhost:3000"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  API_BASE_URL: z.string().url().default("http://localhost:3001"),
+});
+
+export const env = envSchema.parse(process.env);

@@ -8,7 +8,7 @@ export class ApiError extends Error {
   constructor(
     public message: string,
     public status?: number,
-    public data?: any
+    public data?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
@@ -62,52 +62,52 @@ export const apiClient = async <T>(
     }
 
     if (!response.ok) {
-      let errorData;
+      let errorData: unknown;
       try {
         errorData = await response.json();
       } catch {
         errorData = { message: 'Unknown error' };
       }
-      throw new ApiError(errorData.message || 'Request failed', response.status, errorData);
+      throw new ApiError(
+        (errorData as { message?: string })?.message || 'Request failed',
+        response.status,
+        errorData
+      );
     }
 
-    let data;
+    let data: unknown;
     try {
       data = await response.json();
-    } catch (e) {
+    } catch {
       data = null;
     }
 
-    return data;
+    return data as T;
   };
 
   return retry(makeRequest, retries, retryDelay);
 };
 
-  if (response.ok) {
-    return data as T;
-  } else {
-    throw new ApiError(
-      data?.message || response.statusText || 'An error occurred',
-      response.status,
-      data
-    );
-  }
-};
-
-apiClient.get = <T>(endpoint: string, config?: ApiClientConfig) =>
+// Convenience methods
+export const apiClientGet = <T>(endpoint: string, config?: ApiClientConfig) =>
   apiClient<T>(endpoint, { ...config, method: 'GET' });
 
-apiClient.post = <T>(endpoint: string, body: any, config?: ApiClientConfig) =>
+export const apiClientPost = <T>(endpoint: string, body: unknown, config?: ApiClientConfig) =>
   apiClient<T>(endpoint, {
     ...config,
     method: 'POST',
     body: JSON.stringify(body),
   });
 
-apiClient.put = <T>(endpoint: string, body: any, config?: ApiClientConfig) =>
+export const apiClientPut = <T>(endpoint: string, body: unknown, config?: ApiClientConfig) =>
   apiClient<T>(endpoint, {
     ...config,
+    method: 'PUT',
+    body: JSON.stringify(body),
+  });
+
+export const apiClientDelete = <T>(endpoint: string, config?: ApiClientConfig) =>
+  apiClient<T>(endpoint, { ...config, method: 'DELETE' });
     method: 'PUT',
     body: JSON.stringify(body),
   });

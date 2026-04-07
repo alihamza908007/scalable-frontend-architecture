@@ -4,7 +4,7 @@ export const queryKeys = {
     session: () => ["auth", "session"] as const,
   },
   teams: {
-    list: (filters?: Record<string, any>) =>
+    list: (filters?: Record<string, unknown>) =>
       ["teams", "list", filters] as const,
     detail: (id: string) => ["teams", "detail", id] as const,
   },

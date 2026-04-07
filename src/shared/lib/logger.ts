@@ -3,12 +3,16 @@ type LogLevel = "debug" | "info" | "warn" | "error";
 interface LogEntry {
   level: LogLevel;
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
   timestamp: string;
 }
 
 class Logger {
-  private log(level: LogLevel, message: string, data?: any) {
+  private log(
+    level: LogLevel,
+    message: string,
+    data?: Record<string, unknown>,
+  ) {
     const entry: LogEntry = {
       level,
       message,
@@ -25,19 +29,19 @@ class Logger {
     }
   }
 
-  debug(message: string, data?: any) {
+  debug(message: string, data?: Record<string, unknown>) {
     this.log("debug", message, data);
   }
 
-  info(message: string, data?: any) {
+  info(message: string, data?: Record<string, unknown>) {
     this.log("info", message, data);
   }
 
-  warn(message: string, data?: any) {
+  warn(message: string, data?: Record<string, unknown>) {
     this.log("warn", message, data);
   }
 
-  error(message: string, data?: any) {
+  error(message: string, data?: Record<string, unknown>) {
     this.log("error", message, data);
   }
 }

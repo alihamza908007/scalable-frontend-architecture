@@ -2,7 +2,9 @@
 
 import { getCLS, getFID, getFCP, getLCP, getTTFB } from "web-vitals";
 
-export function reportWebVitals(onPerfEntry?: (metric: any) => void) {
+export function reportWebVitals(
+  onPerfEntry?: (metric: Record<string, unknown>) => void,
+) {
   if (onPerfEntry && onPerfEntry instanceof Function) {
     getCLS(onPerfEntry);
     getFID(onPerfEntry);

@@ -6,13 +6,12 @@ import { loginSchema, LoginFormData } from "../schemas/login-schema";
 import { Form } from "@/shared/components/ui/form";
 import { Button } from "@/shared/components/ui/button";
 import { FormInput } from "@/shared/components/form-input";
-import { useAuth } from "../hooks/useAuth";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginFormData>({
@@ -26,16 +25,17 @@ export const LoginForm = () => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      // Mock API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
 
-      // Mock successful login
-      login(
-        { id: "1", email: data.email, name: "Demo User" },
-        "mock-jwt-token",
-      );
-
-      router.push("/dashboard");
+      if (result?.error) {
+        console.error("Login failed", result.error);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.error("Login failed", error);
     } finally {

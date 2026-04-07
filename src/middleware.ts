@@ -1,30 +1,30 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { auth } from "@/shared/lib/auth";
 
-const protectedRoutes = ['/dashboard'];
-const authRoutes = ['/login'];
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
 
-export function middleware(request: NextRequest) {
-  const token = request.cookies.get('auth-token')?.value;
-
-  const { pathname } = request.nextUrl;
+  const protectedRoutes = ["/dashboard"];
+  const authRoutes = ["/login"];
 
   const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+    nextUrl.pathname.startsWith(route),
   );
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isAuthRoute = authRoutes.some((route) =>
+    nextUrl.pathname.startsWith(route),
+  );
 
-  if (isProtected && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (isProtected && !isLoggedIn) {
+    return Response.redirect(new URL("/login", nextUrl));
   }
 
-  if (isAuthRoute && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  if (isAuthRoute && isLoggedIn) {
+    return Response.redirect(new URL("/dashboard", nextUrl));
   }
 
-  return NextResponse.next();
-}
+  return Response.next();
+});
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
