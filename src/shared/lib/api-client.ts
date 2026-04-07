@@ -8,19 +8,19 @@ export class ApiError extends Error {
   constructor(
     public message: string,
     public status?: number,
-    public data?: unknown
+    public data?: unknown,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const retry = async <T>(
   fn: () => Promise<T>,
   retries: number = 3,
-  delay: number = 1000
+  delay: number = 1000,
 ): Promise<T> => {
   try {
     return await fn();
@@ -35,10 +35,15 @@ const retry = async <T>(
 
 export const apiClient = async <T>(
   endpoint: string,
-  { params, retries = 0, retryDelay = 1000, ...customConfig }: ApiClientConfig = {}
+  {
+    params,
+    retries = 0,
+    retryDelay = 1000,
+    ...customConfig
+  }: ApiClientConfig = {},
 ): Promise<T> => {
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...customConfig.headers,
   };
 
@@ -58,7 +63,7 @@ export const apiClient = async <T>(
 
     if (response.status === 401) {
       // Handle unauthorized
-      throw new ApiError('Unauthorized', 401);
+      throw new ApiError("Unauthorized", 401);
     }
 
     if (!response.ok) {
@@ -66,12 +71,12 @@ export const apiClient = async <T>(
       try {
         errorData = await response.json();
       } catch {
-        errorData = { message: 'Unknown error' };
+        errorData = { message: "Unknown error" };
       }
       throw new ApiError(
-        (errorData as { message?: string })?.message || 'Request failed',
+        (errorData as { message?: string })?.message || "Request failed",
         response.status,
-        errorData
+        errorData,
       );
     }
 
@@ -90,27 +95,31 @@ export const apiClient = async <T>(
 
 // Convenience methods
 export const apiClientGet = <T>(endpoint: string, config?: ApiClientConfig) =>
-  apiClient<T>(endpoint, { ...config, method: 'GET' });
+  apiClient<T>(endpoint, { ...config, method: "GET" });
 
-export const apiClientPost = <T>(endpoint: string, body: unknown, config?: ApiClientConfig) =>
+export const apiClientPost = <T>(
+  endpoint: string,
+  body: unknown,
+  config?: ApiClientConfig,
+) =>
   apiClient<T>(endpoint, {
     ...config,
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(body),
   });
 
-export const apiClientPut = <T>(endpoint: string, body: unknown, config?: ApiClientConfig) =>
+export const apiClientPut = <T>(
+  endpoint: string,
+  body: unknown,
+  config?: ApiClientConfig,
+) =>
   apiClient<T>(endpoint, {
     ...config,
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(body),
   });
 
-export const apiClientDelete = <T>(endpoint: string, config?: ApiClientConfig) =>
-  apiClient<T>(endpoint, { ...config, method: 'DELETE' });
-    method: 'PUT',
-    body: JSON.stringify(body),
-  });
-
-apiClient.delete = <T>(endpoint: string, config?: ApiClientConfig) =>
-  apiClient<T>(endpoint, { ...config, method: 'DELETE' });
+export const apiClientDelete = <T>(
+  endpoint: string,
+  config?: ApiClientConfig,
+) => apiClient<T>(endpoint, { ...config, method: "DELETE" });

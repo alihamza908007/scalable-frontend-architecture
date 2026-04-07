@@ -7,6 +7,12 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Add this to specify the root directory explicitly
+  experimental: {
+    turbo: {
+      root: __dirname,
+    },
+  },
 };
 
 export default bundleAnalyzer(nextConfig);

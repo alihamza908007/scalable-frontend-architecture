@@ -15,7 +15,7 @@ export const updateTeamSchema = z.object({
 
 export const inviteMemberSchema = z.object({
   email: z.string().email("Invalid email address"),
-  role: z.enum(["admin", "member"], { required_error: "Role is required" }),
+  role: z.enum(["admin", "member"]),
 });
 
 export type CreateTeamFormData = z.infer<typeof createTeamSchema>;

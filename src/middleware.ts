@@ -1,6 +1,7 @@
+import { NextResponse } from "next/server";
 import { auth } from "@/shared/lib/auth";
 
-export default auth((req) => {
+export default auth((req: any) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
@@ -15,14 +16,14 @@ export default auth((req) => {
   );
 
   if (isProtected && !isLoggedIn) {
-    return Response.redirect(new URL("/login", nextUrl));
+    return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
   if (isAuthRoute && isLoggedIn) {
-    return Response.redirect(new URL("/dashboard", nextUrl));
+    return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
 
-  return Response.next();
+  return NextResponse.next();
 });
 
 export const config = {

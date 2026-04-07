@@ -1,14 +1,13 @@
-import * as React from 'react';
-import { useFormContext } from 'react-hook-form';
+import * as React from "react";
+import { useFormContext } from "react-hook-form";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/shared/components/ui/form';
-import { Input } from '@/shared/components/ui/input';
-import { cn } from '@/shared/lib/utils';
+} from "@/shared/components/ui/form";
+import { Input } from "@/shared/components/ui/input";
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -38,7 +37,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
         )}
       />
     );
-  }
+  },
 );
 
-FormInput.displayName = 'FormInput';
+FormInput.displayName = "FormInput";

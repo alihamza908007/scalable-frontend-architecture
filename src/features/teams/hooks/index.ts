@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/shared/lib/query-keys";
 import { teamsApi } from "../api";
-import { UpdateTeamData, InviteMemberData } from "../types";
+import { UpdateTeamData, InviteMemberData } from "../types.ts";
 
 export const useTeams = () => {
   return useQuery({

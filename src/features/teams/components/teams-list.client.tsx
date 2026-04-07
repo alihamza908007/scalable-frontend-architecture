@@ -69,7 +69,7 @@ export const TeamsList = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Your Teams</h2>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
+          <DialogTrigger>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
               Create Team
