@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 
 const LoginForm = dynamic(
   () =>
-    import("@/features/auth/components/login-form").then((mod) => ({
+    import("@/features/auth/components/login-form.client").then((mod) => ({
       default: mod.LoginForm,
     })),
   {

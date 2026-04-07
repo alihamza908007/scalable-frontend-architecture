@@ -1,5 +1,7 @@
 export type ApiClientConfig = RequestInit & {
   params?: Record<string, string>;
+  retries?: number;
+  retryDelay?: number;
 };
 
 export class ApiError extends Error {
@@ -13,9 +15,27 @@ export class ApiError extends Error {
   }
 }
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const retry = async <T>(
+  fn: () => Promise<T>,
+  retries: number = 3,
+  delay: number = 1000
+): Promise<T> => {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries > 0 && (error as ApiError).status !== 401) {
+      await sleep(delay);
+      return retry(fn, retries - 1, delay * 2);
+    }
+    throw error;
+  }
+};
+
 export const apiClient = async <T>(
   endpoint: string,
-  { params, ...customConfig }: ApiClientConfig = {}
+  { params, retries = 0, retryDelay = 1000, ...customConfig }: ApiClientConfig = {}
 ): Promise<T> => {
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -33,20 +53,36 @@ export const apiClient = async <T>(
     url += `?${searchParams.toString()}`;
   }
 
-  const response = await fetch(url, config);
+  const makeRequest = async (): Promise<T> => {
+    const response = await fetch(url, config);
 
-  if (response.status === 401) {
-    // Handle unauthorized (redirect to login, clear storage, etc.)
-    // For now, just throw
-    throw new ApiError('Unauthorized', 401);
-  }
+    if (response.status === 401) {
+      // Handle unauthorized
+      throw new ApiError('Unauthorized', 401);
+    }
 
-  let data;
-  try {
-    data = await response.json();
-  } catch (e) {
-    data = null;
-  }
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        errorData = { message: 'Unknown error' };
+      }
+      throw new ApiError(errorData.message || 'Request failed', response.status, errorData);
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      data = null;
+    }
+
+    return data;
+  };
+
+  return retry(makeRequest, retries, retryDelay);
+};
 
   if (response.ok) {
     return data as T;
